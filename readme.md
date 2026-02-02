@@ -1,4 +1,4 @@
-# Kart Telemetry Dashboard
+# Kart Telemetry and Driver Dashboard
 
 ## Overview
 
