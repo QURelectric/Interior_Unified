@@ -33,15 +33,15 @@ cd <repository-directory>'''
 3. Activate the virtual environment:
 
 - On Linux/macOS:
-'''source .venv/bin/activate'''
+'source .venv/bin/activate
 - On Windows (PowerShell):
-'''.venv\Scripts\Activate.ps1'''
+'.venv\Scripts\Activate.ps1'
 
 4. Install required packages:
-'''pip install -r requirements.txt'''
+'pip install -r requirements.txt'
 
 5. Run the FastAPI server:
-'''uvicorn app.main:app --host 0.0.0.0 --port 8000'''
+'uvicorn app.main:app --host 0.0.0.0 --port 8000'
 
 ---
 
