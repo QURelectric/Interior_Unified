@@ -17,6 +17,9 @@ from app.mqtt import mqtt_loop
 
 app = FastAPI()
 
+
+
+
 templates = Jinja2Templates(directory="app/templates")
 
 @app.on_event("startup")
