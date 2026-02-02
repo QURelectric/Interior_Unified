@@ -26,22 +26,22 @@ This project implements a basic telemetry dashboard for a racing go-kart. It col
 ## Installation Guide
 
 1. Clone the repository:
-'git clone <repository-url>
+`git clone <repository-url>
 
-cd <repository-directory>'
+cd <repository-directory>`
 2. Create a Python virtual environment:
-'python3 -m venv .venv'
+`python3 -m venv .venv`
 3. Activate the virtual environment:
 - On Linux/macOS:
-'source .venv/bin/activate'
+`source .venv/bin/activate`
 - On Windows (PowerShell):
-'.venv\Scripts\Activate.ps1'
+`.venv\Scripts\Activate.ps1`
 
 4. Install required packages:
-'pip install -r requirements.txt'
+`pip install -r requirements.txt`
 
 5. Run the FastAPI server:
-'uvicorn app.main:app --host 0.0.0.0 --port 8000'
+`uvicorn app.main:app --host 0.0.0.0 --port 8000`
 
 ---
 
