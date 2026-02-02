@@ -26,9 +26,8 @@ This project implements a basic telemetry dashboard for a racing go-kart. It col
 ## Installation Guide
 
 1. Clone the repository:
-`git clone <repository-url>
-
-cd <repository-directory>`
+`git clone <repository-url>`
+`cd <repository-directory>`
 2. Create a Python virtual environment:
 `python3 -m venv .venv`
 3. Activate the virtual environment:
