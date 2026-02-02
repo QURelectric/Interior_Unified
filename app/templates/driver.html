@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kart Driver Display</title>
+    <style>
+        body {
+            background: black;
+            color: #0f0;
+            font-family: Arial;
+        }
+        .item {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="item">Speed: <span id="speed">--</span></div>
+    <div class="item">Motor Temp: <span id="motor">--</span></div>
+    <div class="item">Battery: <span id="soc">--</span></div>
+
+    <script>
+        const ws = new WebSocket(`ws://${location.host}/ws`);
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            document.getElementById("speed").innerText =
+                data.Speed.toFixed(1);
+
+            document.getElementById("motor").innerText =
+                data.MotorTemp.toFixed(1);
+
+            document.getElementById("soc").innerText =
+                data.batterySOC + "%";
+        };
+    </script>
+</body>
+</html>
