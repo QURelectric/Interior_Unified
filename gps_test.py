@@ -1,8 +1,8 @@
 import time
 import math
-import gps
+import gps_test
 
-session = gps.gps(mode=gps.WATCH_ENABLE)
+session = gps_test(mode=gps_test.WATCH_ENABLE)
 
 latest = None
 last_print = 0
