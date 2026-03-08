@@ -2,7 +2,7 @@ import time
 import math
 import gps
 
-session = gps(mode=gps.WATCH_ENABLE)
+session = gps.gps(mode=gps.WATCH_ENABLE)
 
 latest = None
 last_print = 0
