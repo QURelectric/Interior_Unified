@@ -1,3 +1,16 @@
+"""
+#gps_test.py
+
+How to run:
+
+- Run file (python3 gps_test.py)
+- On the Android phone, open GPSd Forwarder app and set:
+       Host: relectric.local
+       Port: 29998
+
+The Raspberry Pi runs gpsd via the android-gpsd.service systemd service,
+which listens for the forwarded GPS data.
+"""
 import time
 import math
 import gps
