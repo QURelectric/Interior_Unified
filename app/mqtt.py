@@ -23,7 +23,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 def on_message(client, userdata, msg):
 #PLACEHOLDER
-    print(message + "\n")
+    print(msg + "\n")
 
 
 client = mqtt.Client(
