@@ -4,20 +4,215 @@
     <title>Kart Driver Display</title>
     <style>
         body {
+            margin: 0;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            grid-template-rows: 1fr auto 1fr;
+            padding: 30px;
+
             background: black;
-            color: #0f0;
-            font-family: Arial;
-        }
-        .item {
-            font-size: 2em;
+            font-family: sans-serif;
+            font-size: 130px;
+
             margin: 10px 0;
+            color: white; 
+            text-shadow:
+                0 0 2px #ffffff,
+                0 0 6px #ffffff,
+                0 0 10px #ffffff,
+                0 0 16px #0A4FFF,
+                0 0 26px #0A4FFF,
+                0 0 42px #0A4FFF,
+                0 0 64px #0A4FFF;
+        }
+
+        .speedometer {
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 680px;
+            height: 680px;
+            position: relative;
+
+            filter: drop-shadow(0 0 10px #0A4FFF)
+        }
+
+        .speed-ring {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            transform: rotate(-135deg);
+            transition: background 0.08s linear;
+
+            filter:
+                drop-shadow(0 0 4px #ffffff)
+                drop-shadow(0 0 8px #ffffff)
+                drop-shadow(0 0 16px #0A4FFF)
+                drop-shadow(0 0 26px #0A4FFF);
+        }
+
+        .speed-hole {
+            position: absolute;
+            width: 75%;
+            height: 75%;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+
+            background: black;
+        }
+
+        .speed-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -70%);
+            z-index: 2;
+
+            font-weight: bold;
+            font-size: 160px;
+        }
+
+        .unit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 200%);
+            z-index: 2;
+            
+            font-size: 48px;
+        } 
+
+        .lap {
+            grid-column: 1;
+            grid-row: 1;
+            justify-self: start;
+            align-self: center;
+            padding-left: 25px;
+        }
+
+        .motor-temp {
+            grid-column: 3;
+            grid-row: 1;
+            justify-self: end;
+            align-self: center;
+            padding-right: 25px;
+        }
+
+        .lap-time {
+            grid-column: 1;
+            grid-row: 3;
+            justify-self: start;
+            align-self: center;
+            padding-left: 25px;
+        }
+
+        .battery {
+            grid-column: 3;
+            grid-row: 3;
+            justify-self: end;
+            align-self: center;
+            padding-right: 25px;
+        }
+
+        .pit {
+            position: fixed;
+            top: 2.5%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            padding: 20px 100px;
+            border-radius: 12px;
+            
+            background: rgba(30, 30, 30, 0.85);
+            font-size: 120px;
+            text-align: center;
+
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes slideDown {
+            0% { transform: translate(-50%, -80%); opacity: 0; }
+            100% { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        .pit.show {
+            animation: slideDown 0.4s ease forwards;
+        }
+
+        @keyframes slideUp {
+            0% { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, -80%); opacity: 0; }
+        }
+
+        .pit.hide {
+            animation: slideUp 0.4s ease forwards;
+        }
+
+        .exit {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 2340px 1080px;
+            border-radius: 12px;
+            
+            background: #000;
+            font-size: 280px;
+            text-align: center;
+            text-shadow:
+                0 0 2px #ffffff,
+                0 0 6px #ffffff,
+                0 0 10px #ffffff,
+                0 0 16px #ff0a0a,
+                0 0 26px #ff0a0a,
+                0 0 42px #ff0a0a,
+                0 0 64px #ff0a0a;
+
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        
+        @keyframes zoomIn {
+            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .exit.zoom {
+            animation: zoomIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
     </style>
 </head>
+
 <body>
-    <div class="item">Speed: <span id="speed">--</span></div>
-    <div class="item">Motor Temp: <span id="motor">--</span></div>
-    <div class="item">Battery: <span id="soc">--</span></div>
+    <div class="lap"> 
+        Lap: <span id="lap">--</span>
+    </div>
+    <div class="motor-temp"> 
+        Temp: <span id="motor">--</span>  
+    </div> 
+    <div class="speedometer">
+        <div class="speed-ring" id="speed-ring"></div>
+        <div class="speed-hole"></div>
+        <div class="speed-text" id="speed-text"></div>
+        <div class="unit">km/h</div>
+    </div> 
+    <div class="lap-time"> 
+        Time: <span id="time">--</span> 
+    </div> 
+    <div class="battery"> 
+        Battery: <span id="soc">--</span>
+    </div> 
+    <div id="pit" class="pit"></div>
+    <div id="exit" class="exit"></div>
 
     <script>
         const ws = new WebSocket(`ws://${location.host}/ws`);
@@ -25,15 +220,74 @@
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
-            document.getElementById("speed").innerText =
-                data.Speed.toFixed(1);
+            document.getElementById("lap").innerText =
+                data.lap;
 
             document.getElementById("motor").innerText =
-                data.MotorTemp.toFixed(1);
+                data.temp.toFixed(1);
+
+            document.getElementById("time").innerText =
+                data.time;
 
             document.getElementById("soc").innerText =
                 data.batterySOC + "%";
         };
+
+        document.addEventListener("keydown", (event) => {
+                if (event.code === "Space") {
+                    showPit("PIT SOON");
+                }
+                if (event.code == "Backspace"){
+                    showExit("EXIT VEHICLE NOW")
+                }
+            });        
+
+        function updateSpeed(speed) {
+            const maxSpeed = 100;
+            const sweep = 270;  
+
+            const angle = (speed / maxSpeed) * sweep;
+
+            document.getElementById("speed-ring").style.background = `
+                conic-gradient(
+                    #cfe4ff 0deg,
+                    #99c9ff ${angle * 0.25}deg,
+                    #66aaff ${angle * 0.5}deg,
+                    #3388ff ${angle * 0.75}deg,
+                    #0072ff ${angle}deg,
+
+                    transparent ${angle}deg
+                )
+            `;
+
+            document.getElementById("speed-text").textContent = Math.round(speed);
+        }
+
+        let s = 0;
+        setInterval(() => {
+            s = (s + 2) % 100;
+            updateSpeed(s);
+        }, 100);
+
+        function showPit(message) {
+            const pit = document.getElementById("pit");
+            pit.textContent = message;
+
+            pit.classList.add("show");
+
+            setTimeout(() => {
+                pit.classList.remove("show");
+                pit.classList.add("hide");
+            }, 10000); 
+        }
+
+        function showExit(message) {
+            const exit = document.getElementById("exit");
+            exit.textContent = message;
+             
+            exit.classList.add("zoom");
+        }
+
     </script>
 </body>
 </html>
