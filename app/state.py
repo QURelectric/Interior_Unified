@@ -21,6 +21,7 @@ vehicle_state = {
     "Current": 0.0,
     "Speed": 10.0,
     "OperatingTime": 100.0,
+    "LapCount": 0,
 
     "GPS": [None, None], #[lat, lon]
 
