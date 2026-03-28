@@ -17,17 +17,13 @@ from app.mqtt import mqtt_loop
 
 app = FastAPI()
 
-
-
-
 templates = Jinja2Templates(directory="app/templates")
 
 @app.on_event("startup")
 def startup():
     threading.Thread(target=can_loop, daemon=True).start()
     threading.Thread(target=mqtt_loop, daemon=True).start()
-
-    
+ 
 @app.get("/", response_class=HTMLResponse)
 async def driver_page(request: Request):
     return templates.TemplateResponse(

@@ -26,14 +26,6 @@ def on_message(client, userdata, msg):
     print(message + "\n")
 
 
-client = mqtt.Client(
-    client_id="kart_client",
-    callback_api_version=mqtt.CallbackAPIVersion.VERSION2
-)
-
-client.connect(BROKER, PORT, 60)
-client.loop_start()
-
 def mqtt_loop():
     client = mqtt.Client()
     client.connect(BROKER, 1883, 60)

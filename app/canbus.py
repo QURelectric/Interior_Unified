@@ -12,7 +12,12 @@ def can_loop():
             vehicle_state["Speed"] = random.uniform(0, 80)
             vehicle_state["MotorTemp"] += random.uniform(-0.2, 0.5)
             vehicle_state["OperatingTime"] += 0.1
+            vehicle_state["batterySOC"] -= 0.1
             vehicle_state["timestamp"] = time.time()
+            if(random.uniform(0,100) >= 75):
+                vehicle_state["MotorFlag"] = 1
+            else: 
+                vehicle_state["MotorFlag"] = 0
         time.sleep(0.1)  # 10 Hz
 
 if __name__ == "__main__":
