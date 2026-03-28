@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 from app.state import vehicle_state, state_lock
 from app.canbus import can_loop
 from app.mqtt import mqtt_loop
+from app.gps_reader import gps_loop
 
 #### main.py ####
 # DRIVER'S DISPLAY
@@ -26,6 +27,7 @@ templates = Jinja2Templates(directory="app/templates")
 def startup():
     threading.Thread(target=can_loop, daemon=True).start()
     threading.Thread(target=mqtt_loop, daemon=True).start()
+    threading.Thread(target=gps_loop, daemon=True).start()
 
     
 @app.get("/", response_class=HTMLResponse)
