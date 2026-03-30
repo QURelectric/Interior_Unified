@@ -1,59 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kart Driver Display</title>
     <style>
+        :root {
+            --neon-blue: #0A4FFF;
+            --neon-red: #ff0a0a;
+            --glow-text: 0 0 5px #fff, 0 0 10px var(--neon-blue);
+        }
+
         body {
             margin: 0;
             height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            grid-template-rows: 1fr auto 1fr;
-            padding: 30px;
-
+            width: 100vw;
+            overflow: hidden;
             background: black;
-            font-family: sans-serif;
-            font-size: 130px;
-
-            margin: 10px 0;
-            color: white; 
-            text-shadow:
-                0 0 2px #ffffff,
-                0 0 6px #ffffff,
-                0 0 10px #ffffff,
-                0 0 16px #0A4FFF,
-                0 0 26px #0A4FFF,
-                0 0 42px #0A4FFF,
-                0 0 64px #0A4FFF;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+            display: grid;
+            /* 3x3 Grid to handle corners and center */
+            grid-template-columns: 1fr 1.5fr 1fr;
+            grid-template-rows: 1fr 1.5fr 1fr;
+            box-sizing: border-box;
+            padding: 10px;
         }
 
+        /* Generic styling for data readouts */
+        .data-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 5vw; /* Scales with screen width */
+            font-weight: bold;
+            text-shadow: var(--glow-text);
+        }
+
+        .label { font-size: 2.5vw; opacity: 0.8; text-transform: uppercase; }
+
+        /* Positioning */
+        .lap { grid-column: 1; grid-row: 1; align-items: flex-start; }
+        .motor-temp { grid-column: 3; grid-row: 1; align-items: flex-end; text-align: right; }
+        .lap-time { grid-column: 1; grid-row: 3; align-items: flex-start; }
+        .battery { grid-column: 3; grid-row: 3; align-items: flex-end; text-align: right; }
+
+        /* Speedometer Center */
         .speedometer {
             grid-column: 2;
             grid-row: 2;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-
-            width: 680px;
-            height: 680px;
-            position: relative;
-
-            filter: drop-shadow(0 0 10px #0A4FFF)
+            width: 100%;
+            aspect-ratio: 1/1;
         }
 
         .speed-ring {
-            width: 100%;
-            height: 100%;
+            width: 90%;
+            height: 90%;
             border-radius: 50%;
-            position: relative;
             transform: rotate(-135deg);
-            transition: background 0.08s linear;
-
-            filter:
-                drop-shadow(0 0 4px #ffffff)
-                drop-shadow(0 0 8px #ffffff)
-                drop-shadow(0 0 16px #0A4FFF)
-                drop-shadow(0 0 26px #0A4FFF);
+            transition: background 0.1s ease;
+            filter: drop-shadow(0 0 15px var(--neon-blue));
         }
 
         .speed-hole {
@@ -61,233 +71,161 @@
             width: 75%;
             height: 75%;
             border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-
             background: black;
+            z-index: 1;
+        }
+
+        .speed-text-container {
+            position: absolute;
+            z-index: 2;
+            text-align: center;
         }
 
         .speed-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -70%);
-            z-index: 2;
-
-            font-weight: bold;
-            font-size: 160px;
+            font-size: 18vw;
+            font-weight: 900;
+            line-height: 1;
+            display: block;
         }
 
         .unit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, 200%);
-            z-index: 2;
-            
-            font-size: 48px;
-        } 
-
-        .lap {
-            grid-column: 1;
-            grid-row: 1;
-            justify-self: start;
-            align-self: center;
-            padding-left: 25px;
+            font-size: 4vw;
+            letter-spacing: 2px;
         }
 
-        .motor-temp {
-            grid-column: 3;
-            grid-row: 1;
-            justify-self: end;
-            align-self: center;
-            padding-right: 25px;
-        }
-
-        .lap-time {
-            grid-column: 1;
-            grid-row: 3;
-            justify-self: start;
-            align-self: center;
-            padding-left: 25px;
-        }
-
-        .battery {
-            grid-column: 3;
-            grid-row: 3;
-            justify-self: end;
-            align-self: center;
-            padding-right: 25px;
-        }
-
+        /* Overlays */
         .pit {
             position: fixed;
-            top: 2.5%;
+            top: 5%;
             left: 50%;
-            transform: translate(-50%, 0);
-            padding: 20px 100px;
-            border-radius: 12px;
-            
-            background: rgba(30, 30, 30, 0.85);
-            font-size: 120px;
+            transform: translateX(-50%);
+            width: 80%;
+            background: rgba(30, 30, 30, 0.9);
+            border: 2px solid var(--neon-blue);
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 8vw;
             text-align: center;
-
+            z-index: 10;
             opacity: 0;
             pointer-events: none;
-        }
-
-        @keyframes slideDown {
-            0% { transform: translate(-50%, -80%); opacity: 0; }
-            100% { transform: translate(-50%, 0); opacity: 1; }
-        }
-
-        .pit.show {
-            animation: slideDown 0.4s ease forwards;
-        }
-
-        @keyframes slideUp {
-            0% { transform: translate(-50%, 0); opacity: 1; }
-            100% { transform: translate(-50%, -80%); opacity: 0; }
-        }
-
-        .pit.hide {
-            animation: slideUp 0.4s ease forwards;
         }
 
         .exit {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 2340px 1080px;
-            border-radius: 12px;
-            
-            background: #000;
-            font-size: 280px;
-            text-align: center;
-            text-shadow:
-                0 0 2px #ffffff,
-                0 0 6px #ffffff,
-                0 0 10px #ffffff,
-                0 0 16px #ff0a0a,
-                0 0 26px #ff0a0a,
-                0 0 42px #ff0a0a,
-                0 0 64px #ff0a0a;
-
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
             opacity: 0;
-            transition: opacity 0.4s ease;
             pointer-events: none;
-        }
-        
-        @keyframes zoomIn {
-            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            text-align: center;
+            font-size: 10vw;
+            color: white;
+            text-shadow: 0 0 20px var(--neon-red);
+            padding: 20px;
         }
 
-        .exit.zoom {
-            animation: zoomIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        /* Animations */
+        .show { animation: fadeIn 0.4s forwards; }
+        .zoom { animation: zoomIn 0.5s forwards; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes zoomIn { from { opacity: 0; scale: 0.5; } to { opacity: 1; scale: 1; } }
+
+        /* Landscape Optimization */
+        @media (orientation: landscape) {
+            .data-box { font-size: 4vh; }
+            .label { font-size: 2vh; }
+            .speed-text { font-size: 15vh; }
         }
     </style>
 </head>
-
 <body>
-    <div class="lap"> 
-        Lap: <span id="lap">--</span>
+
+    <div class="data-box lap">
+        <span class="label">Lap</span>
+        <span id="lap">01</span>
     </div>
-    <div class="motor-temp"> 
-        Temp: <span id="motor">--</span>  
-    </div> 
+
+    <div class="data-box motor-temp">
+        <span class="label">Motor</span>
+        <span><span id="motor">--</span>°C</span>
+    </div>
+
     <div class="speedometer">
         <div class="speed-ring" id="speed-ring"></div>
         <div class="speed-hole"></div>
-        <div class="speed-text" id="speed-text"></div>
-        <div class="unit">km/h</div>
-    </div> 
-    <div class="lap-time"> 
-        Time: <span id="time">--</span> 
-    </div> 
-    <div class="battery"> 
-        Battery: <span id="soc">--</span>
-    </div> 
+        <div class="speed-text-container">
+            <span class="speed-text" id="speed-text">0</span>
+            <span class="unit">KM/H</span>
+        </div>
+    </div>
+
+    <div class="data-box lap-time">
+        <span class="label">Time</span>
+        <span id="time">0:00.0</span>
+    </div>
+
+    <div class="data-box battery">
+        <span class="label">Battery</span>
+        <span id="soc">--%</span>
+    </div>
+
     <div id="pit" class="pit"></div>
     <div id="exit" class="exit"></div>
 
     <script>
+        // WebSocket Logic
         const ws = new WebSocket(`ws://${location.host}/ws`);
-
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-
-            document.getElementById("lap").innerText =
-                data.lap;
-
-            document.getElementById("motor").innerText =
-                data.temp.toFixed(1);
-
-            document.getElementById("time").innerText =
-                data.time;
-
-            document.getElementById("soc").innerText =
-                data.batterySOC + "%";
+            document.getElementById("lap").innerText = data.lap;
+            document.getElementById("motor").innerText = data.temp.toFixed(1);
+            document.getElementById("time").innerText = data.time;
+            document.getElementById("soc").innerText = data.batterySOC + "%";
         };
 
-        document.addEventListener("keydown", (event) => {
-                if (event.code === "Space") {
-                    showPit("PIT SOON");
-                }
-                if (event.code == "Backspace"){
-                    showExit("EXIT VEHICLE NOW")
-                }
-            });        
-
+        // Speed Animation (Internal Demo)
         function updateSpeed(speed) {
             const maxSpeed = 100;
-            const sweep = 270;  
-
-            const angle = (speed / maxSpeed) * sweep;
-
+            const angle = (speed / maxSpeed) * 270;
             document.getElementById("speed-ring").style.background = `
                 conic-gradient(
                     #cfe4ff 0deg,
-                    #99c9ff ${angle * 0.25}deg,
-                    #66aaff ${angle * 0.5}deg,
-                    #3388ff ${angle * 0.75}deg,
                     #0072ff ${angle}deg,
-
                     transparent ${angle}deg
                 )
             `;
-
             document.getElementById("speed-text").textContent = Math.round(speed);
         }
 
         let s = 0;
         setInterval(() => {
-            s = (s + 2) % 100;
+            s = (s + 1) % 101;
             updateSpeed(s);
-        }, 100);
+        }, 50);
 
-        function showPit(message) {
-            const pit = document.getElementById("pit");
-            pit.textContent = message;
+        // Alerts
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space") showPit("PIT SOON");
+            if (e.code === "Backspace") showExit("EXIT VEHICLE NOW");
+        });
 
-            pit.classList.add("show");
-
-            setTimeout(() => {
-                pit.classList.remove("show");
-                pit.classList.add("hide");
-            }, 10000); 
+        function showPit(msg) {
+            const p = document.getElementById("pit");
+            p.textContent = msg;
+            p.classList.add("show");
+            setTimeout(() => p.classList.remove("show"), 5000);
         }
 
-        function showExit(message) {
-            const exit = document.getElementById("exit");
-            exit.textContent = message;
-             
-            exit.classList.add("zoom");
+        function showExit(msg) {
+            const e = document.getElementById("exit");
+            e.textContent = msg;
+            e.classList.add("zoom");
         }
-
     </script>
 </body>
 </html>
