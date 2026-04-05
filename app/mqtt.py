@@ -28,9 +28,9 @@ def on_message(client, userdata, msg):
         with state_lock:
             vehicle_state["Pit"] = data.get("Pit", 0)  
             vehicle_state["Exit"] = data.get("Exit", 0)
-        print(f"[MQTT] Received on {msg.topic}: {message}")
-    except json.JSONDecodeError:
-        print(f"[MQTT] Bad JSON on {msg.topic}: {msg.payload}")
+            print(f"[MQTT] Received on {msg.topic}: {message}")
+        except json.JSONDecodeError:
+            print(f"[MQTT] Bad JSON on {msg.topic}: {msg.payload}")
 
 
 def mqtt_loop():
