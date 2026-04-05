@@ -210,6 +210,7 @@
             pit.textContent = message;
             pit.classList.add("show");
             setTimeout(() => {pit.classList.remove("show"); pit.classList.add("hide");}, 10000); 
+            pit.classList.remove("hide");
         }
 
         function showExit(message) {
