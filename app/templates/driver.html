@@ -175,6 +175,7 @@
             document.getElementById("motor").innerText = data.MotorTemp.toFixed(1);
             document.getElementById("time").innerText = data.LapTime;
             document.getElementById("soc").innerText = data.batterySOC + "%";
+            updateSpeed(data.Speed);
         };  
 
         // Data for Speed Demo
@@ -198,12 +199,6 @@
 
             document.getElementById("speed-text").textContent = Math.round(speed);
         }
-
-        let s = 0;
-        setInterval(() => {
-            s = (s + 2) % 100;
-            updateSpeed(s);
-        }, 100);
 
         // Activating Alerts Demo
         document.addEventListener("keydown", (event) => {
