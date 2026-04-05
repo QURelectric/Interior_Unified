@@ -35,4 +35,6 @@ vehicle_state = {
     "GPS": [None, None],
 
     "timestamp": time.time(),
+    "Pit" : 0,
+    "Exit" : 0
 }
