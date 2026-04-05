@@ -166,6 +166,7 @@
 
     <script> 
         // Websocket Logic
+        var lastPit = 0;
         const ws = new WebSocket(`ws://${location.host}/ws`);
 
         ws.onmessage = (event) => {
@@ -178,8 +179,11 @@
             updateSpeed(data.Speed);
 
             // Activating Alerts
-            if (data.Pit == 1){
+            if (data.Pit == 1  && lastPit == 0){
+                lastPit = 1;
                 showPit("PIT SOON");
+            } else if(data.Pit == 0) {
+                lastPit = 0;
             }
             if (data.Exit == 1){
                 showExit("EXIT VEHICLE NOW");
