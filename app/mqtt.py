@@ -22,16 +22,15 @@ def on_connect(client, userdata, flags, reason_code, properties):
     print("Subscribed:", result)
 
 def on_message(client, userdata, msg):
-       try:
+    try:
         message = msg.payload.decode(errors="replace")
-        data = json.loads(message)                      # ← parse the string into a dict
+        data = json.loads(message)
         with state_lock:
-            vehicle_state["Pit"] = data.get("Pit", 0)  
+            vehicle_state["Pit"] = data.get("Pit", 0)
             vehicle_state["Exit"] = data.get("Exit", 0)
-            print(f"[MQTT] Received on {msg.topic}: {message}")
-        except json.JSONDecodeError:
-            print(f"[MQTT] Bad JSON on {msg.topic}: {msg.payload}")
-
+        print(f"[MQTT] Received on {msg.topic}: {message}")
+    except json.JSONDecodeError:
+        print(f"[MQTT] Bad JSON on {msg.topic}: {msg.payload}")
 
 def mqtt_loop():
     client = mqtt.Client(
