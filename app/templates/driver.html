@@ -171,9 +171,9 @@
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
-            document.getElementById("lap").innerText = data.lap;
-            document.getElementById("motor").innerText = data.temp.toFixed(1);
-            document.getElementById("time").innerText = data.time;
+            document.getElementById("lap").innerText = data.LapNumber;
+            document.getElementById("motor").innerText = data.MotorTemp.toFixed(1);
+            document.getElementById("time").innerText = data.LapTime;
             document.getElementById("soc").innerText = data.batterySOC + "%";
         };  
 
