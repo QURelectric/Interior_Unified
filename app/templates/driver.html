@@ -208,9 +208,9 @@
         function showPit(message) {
             const pit = document.getElementById("pit");
             pit.textContent = message;
+            pit.classList.remove("hide");            
             pit.classList.add("show");
             setTimeout(() => {pit.classList.remove("show"); pit.classList.add("hide");}, 10000); 
-            pit.classList.remove("hide");
         }
 
         function showExit(message) {
