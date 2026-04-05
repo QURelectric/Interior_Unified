@@ -32,10 +32,8 @@ def startup():
     
 @app.get("/", response_class=HTMLResponse)
 async def driver_page(request: Request):
-    return templates.TemplateResponse(
-        "driver.html",
-        {"request": request}
-    )
+    with open("app/templates/driver.html") as f:
+        return HTMLResponse(f.read())
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
