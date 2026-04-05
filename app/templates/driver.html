@@ -178,8 +178,12 @@
             updateSpeed(data.Speed);
 
             // Activating Alerts
-            if (data.Pit) showPit("PIT SOON");
-            if (data.Exit) showExit("EXIT VEHICLE NOW");
+            if (data.Pit == 1){
+                showPit("PIT SOON");
+            }
+            if (data.Exit == 1){
+                showExit("EXIT VEHICLE NOW");
+            }
         };  
 
         // Updating Speed
