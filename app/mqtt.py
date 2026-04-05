@@ -26,8 +26,8 @@ def on_message(client, userdata, msg):
         message = msg.payload.decode(errors="replace")
         data = json.loads(message)
         with state_lock:
-            vehicle_state["Pit"] = data.get("Pit", 0)
-            vehicle_state["Exit"] = data.get("Exit", 0)
+            vehicle_state["Pit"] = data["Pit"]
+            vehicle_state["Exit"] = data["Exit"]
         print(f"[MQTT] Received on {msg.topic}: {message}")
     except json.JSONDecodeError:
         print(f"[MQTT] Bad JSON on {msg.topic}: {msg.payload}")
