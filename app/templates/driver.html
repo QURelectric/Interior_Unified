@@ -176,9 +176,13 @@
             document.getElementById("time").innerText = data.LapTime;
             document.getElementById("soc").innerText = data.batterySOC + "%";
             updateSpeed(data.Speed);
+
+            // Activating Alerts Demo
+            if (data.pit) {showPit("PIT SOON");}
+            if (data.exit) {showExit("EXIT VEHICLE NOW");}
         };  
 
-        // Data for Speed Demo
+        // Updating Speed
         function updateSpeed(speed) {
             const maxSpeed = 100;
             const sweep = 270;  
@@ -199,12 +203,6 @@
 
             document.getElementById("speed-text").textContent = Math.round(speed);
         }
-
-        // Activating Alerts Demo
-        document.addEventListener("keydown", (event) => {
-            if (event.code === "Space") showPit("PIT SOON");
-            if (event.code == "Backspace") showExit("EXIT VEHICLE NOW")
-        });      
 
         // Alerts
         function showPit(message) {
