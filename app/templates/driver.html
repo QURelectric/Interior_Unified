@@ -1,59 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html land="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kart Driver Display</title>
     <style>
         body {
-            margin: 0;
             height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            grid-template-rows: 1fr auto 1fr;
-            padding: 30px;
+            width: 100vw;
+            overflow: hidden;
 
-            background: black;
-            font-family: sans-serif;
-            font-size: 130px;
-
-            margin: 10px 0;
-            color: white; 
-            text-shadow:
-                0 0 2px #ffffff,
-                0 0 6px #ffffff,
-                0 0 10px #ffffff,
-                0 0 16px #0A4FFF,
-                0 0 26px #0A4FFF,
-                0 0 42px #0A4FFF,
-                0 0 64px #0A4FFF;
-        }
-
-        .speedometer {
-            grid-column: 2;
-            grid-row: 2;
             display: flex;
             justify-content: center;
             align-items: center;
 
-            width: 680px;
-            height: 680px;
-            position: relative;
+            background: black;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 4vw;
+            color: white; 
+            text-shadow:
+                0 0 0.1vw #ffffff,
+                0 0 0.4vw #ffffff,
+                0 0 0.7vw #0A4FFF,
+                0 0 1.1vw #0A4FFF,
+                0 0 1.8vw #0A4FFF,
+                0 0 2.7vw #0A4FFF;
+        }
 
-            filter: drop-shadow(0 0 10px #0A4FFF)
+        /* Speedometer */
+        .speedometer {
+            width: 35%;
+            aspect-ratio: 1/1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            filter: drop-shadow(0 0 0.4vw #0A4FFF)
         }
 
         .speed-ring {
-            width: 100%;
-            height: 100%;
+            width: 95%;
+            height: 95%;
             border-radius: 50%;
-            position: relative;
             transform: rotate(-135deg);
             transition: background 0.08s linear;
 
             filter:
-                drop-shadow(0 0 4px #ffffff)
-                drop-shadow(0 0 8px #ffffff)
-                drop-shadow(0 0 16px #0A4FFF)
-                drop-shadow(0 0 26px #0A4FFF);
+                drop-shadow(0 0 0.2vw #ffffff)
+                drop-shadow(0 0 0.4vw #ffffff)
+                drop-shadow(0 0 0.8vw #0A4FFF)
+                drop-shadow(0 0 1.1vw #0A4FFF);
         }
 
         .speed-hole {
@@ -61,187 +57,127 @@
             width: 75%;
             height: 75%;
             border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             z-index: 1;
-
             background: black;
         }
 
         .speed-text {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -70%);
+            transform: translate(0%, -12%);
             z-index: 2;
-
             font-weight: bold;
-            font-size: 160px;
+            font-size: 9vw;
         }
 
         .unit {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, 200%);
+            transform: translate(0%, 170%);
             z-index: 2;
-            
-            font-size: 48px;
+            font-size: 3vw;
         } 
 
-        .lap {
-            grid-column: 1;
-            grid-row: 1;
-            justify-self: start;
-            align-self: center;
-            padding-left: 25px;
-        }
+        /* Positioning */
+        .lap {position: absolute; top: 2%; left: 2%;}
+        .motor-temp {position: absolute; top: 2%; right: 2%;}
+        .lap-time {position: absolute; bottom: 2%; left: 2%;}
+        .battery {position: absolute; bottom: 2%; right: 2%;}
 
-        .motor-temp {
-            grid-column: 3;
-            grid-row: 1;
-            justify-self: end;
-            align-self: center;
-            padding-right: 25px;
-        }
-
-        .lap-time {
-            grid-column: 1;
-            grid-row: 3;
-            justify-self: start;
-            align-self: center;
-            padding-left: 25px;
-        }
-
-        .battery {
-            grid-column: 3;
-            grid-row: 3;
-            justify-self: end;
-            align-self: center;
-            padding-right: 25px;
-        }
-
+        /* Overlay Alerts */
         .pit {
             position: fixed;
-            top: 2.5%;
+            top: 5%;
             left: 50%;
             transform: translate(-50%, 0);
-            padding: 20px 100px;
-            border-radius: 12px;
+            width: 70%;
+            padding: 1vw;
+            border-radius: 1vw;
             
             background: rgba(30, 30, 30, 0.85);
-            font-size: 120px;
+            font-size: 8vw;
             text-align: center;
 
             opacity: 0;
             pointer-events: none;
-        }
-
-        @keyframes slideDown {
-            0% { transform: translate(-50%, -80%); opacity: 0; }
-            100% { transform: translate(-50%, 0); opacity: 1; }
-        }
-
-        .pit.show {
-            animation: slideDown 0.4s ease forwards;
-        }
-
-        @keyframes slideUp {
-            0% { transform: translate(-50%, 0); opacity: 1; }
-            100% { transform: translate(-50%, -80%); opacity: 0; }
-        }
-
-        .pit.hide {
-            animation: slideUp 0.4s ease forwards;
         }
 
         .exit {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 2340px 1080px;
-            border-radius: 12px;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             
             background: #000;
-            font-size: 280px;
+            font-size: 10vw;
             text-align: center;
             text-shadow:
-                0 0 2px #ffffff,
-                0 0 6px #ffffff,
-                0 0 10px #ffffff,
-                0 0 16px #ff0a0a,
-                0 0 26px #ff0a0a,
-                0 0 42px #ff0a0a,
-                0 0 64px #ff0a0a;
+                0 0 0.1vw #ffffff,
+                0 0 0.4vw #ffffff,
+                0 0 0.7vw #ff0a0a,
+                0 0 1.1vw #ff0a0a,
+                0 0 1.8vw #ff0a0a,
+                0 0 2.7vw #ff0a0a;
 
             opacity: 0;
-            transition: opacity 0.4s ease;
             pointer-events: none;
         }
-        
-        @keyframes zoomIn {
-            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
 
-        .exit.zoom {
-            animation: zoomIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
+        /* Transitions */
+        .pit.show {animation: slideDown 0.4s ease forwards;}
+        .pit.hide {animation: slideUp 0.4s ease forwards;}
+        .exit.zoom {animation: zoomIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;}
+
+        @keyframes slideUp {0% { transform: translate(-50%, 0); opacity: 1; } 100% { transform: translate(-50%, -80%); opacity: 0; }}
+        @keyframes slideDown {0% { transform: translate(-50%, -80%); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; }}
+        @keyframes zoomIn {0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }}
+
     </style>
 </head>
 
 <body>
     <div class="lap"> 
-        Lap: <span id="lap">--</span>
+        Lap: <br> <span id="lap">--</span>
     </div>
+
     <div class="motor-temp"> 
-        Temp: <span id="motor">--</span>  
+        Temp:  <br> <span id="motor">--</span>  
     </div> 
+
     <div class="speedometer">
         <div class="speed-ring" id="speed-ring"></div>
         <div class="speed-hole"></div>
         <div class="speed-text" id="speed-text"></div>
         <div class="unit">km/h</div>
     </div> 
+
     <div class="lap-time"> 
-        Time: <span id="time">--</span> 
+        Time: <br> <span id="time">--</span> 
     </div> 
+
     <div class="battery"> 
-        Battery: <span id="soc">--</span>
+        Battery: <br> <span id="soc">--</span>
     </div> 
+
     <div id="pit" class="pit"></div>
     <div id="exit" class="exit"></div>
 
-    <script>
+    <script> 
+        // Websocket Logic
         const ws = new WebSocket(`ws://${location.host}/ws`);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
-            document.getElementById("lap").innerText =
-                data.lap;
+            document.getElementById("lap").innerText = data.lap;
+            document.getElementById("motor").innerText = data.temp.toFixed(1);
+            document.getElementById("time").innerText = data.time;
+            document.getElementById("soc").innerText = data.batterySOC + "%";
+        };  
 
-            document.getElementById("motor").innerText =
-                data.temp.toFixed(1);
-
-            document.getElementById("time").innerText =
-                data.time;
-
-            document.getElementById("soc").innerText =
-                data.batterySOC + "%";
-        };
-
-        document.addEventListener("keydown", (event) => {
-                if (event.code === "Space") {
-                    showPit("PIT SOON");
-                }
-                if (event.code == "Backspace"){
-                    showExit("EXIT VEHICLE NOW")
-                }
-            });        
-
+        // Data for Speed Demo
         function updateSpeed(speed) {
             const maxSpeed = 100;
             const sweep = 270;  
@@ -269,22 +205,23 @@
             updateSpeed(s);
         }, 100);
 
+        // Activating Alerts Demo
+        document.addEventListener("keydown", (event) => {
+            if (event.code === "Space") showPit("PIT SOON");
+            if (event.code == "Backspace") showExit("EXIT VEHICLE NOW")
+        });      
+
+        // Alerts
         function showPit(message) {
             const pit = document.getElementById("pit");
             pit.textContent = message;
-
             pit.classList.add("show");
-
-            setTimeout(() => {
-                pit.classList.remove("show");
-                pit.classList.add("hide");
-            }, 10000); 
+            setTimeout(() => {pit.classList.remove("show"); pit.classList.add("hide");}, 10000); 
         }
 
         function showExit(message) {
             const exit = document.getElementById("exit");
             exit.textContent = message;
-             
             exit.classList.add("zoom");
         }
 
