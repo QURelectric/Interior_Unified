@@ -177,9 +177,9 @@
             document.getElementById("soc").innerText = data.batterySOC + "%";
             updateSpeed(data.Speed);
 
-            // Activating Alerts Demo
-            if (data.pit) {showPit("PIT SOON");}
-            if (data.exit) {showExit("EXIT VEHICLE NOW");}
+            // Activating Alerts
+            if (data.pit) showPit("PIT SOON");
+            if (data.exit) showExit("EXIT VEHICLE NOW");
         };  
 
         // Updating Speed
