@@ -44,8 +44,12 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             with state_lock:
-                payload = json.dumps(vehicle_state)
-
+                state_dict = dict(vehicle_state)
+            try:
+                payload = json.dumps(state_dict)
+            except TypeError as e:
+                print(f"Serialization error: {e} — state was: {snapshot}")
+                continue
             await websocket.send_text(payload)
             await asyncio.sleep(1/30)  # 30 Hz update
     except Exception:
