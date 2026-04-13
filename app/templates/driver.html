@@ -166,18 +166,31 @@
 
     <script> 
         // Websocket Logic
+        var lastPit = 0;
         const ws = new WebSocket(`ws://${location.host}/ws`);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
-            document.getElementById("lap").innerText = data.lap;
-            document.getElementById("motor").innerText = data.temp.toFixed(1);
-            document.getElementById("time").innerText = data.time;
+            document.getElementById("lap").innerText = data.LapNumber;
+            document.getElementById("motor").innerText = data.MotorTemp.toFixed(1);
+            document.getElementById("time").innerText = data.LapTime;
             document.getElementById("soc").innerText = data.batterySOC + "%";
+            updateSpeed(data.Speed);
+
+            // Activating Alerts
+            if (data.Pit == 1  && lastPit == 0){
+                lastPit = 1;
+                showPit("PIT SOON");
+            } else if(data.Pit == 0) {
+                lastPit = 0;
+            }
+            if (data.Exit == 1){
+                showExit("EXIT VEHICLE NOW");
+            }
         };  
 
-        // Data for Speed Demo
+        // Updating Speed
         function updateSpeed(speed) {
             const maxSpeed = 100;
             const sweep = 270;  
@@ -199,24 +212,13 @@
             document.getElementById("speed-text").textContent = Math.round(speed);
         }
 
-        let s = 0;
-        setInterval(() => {
-            s = (s + 2) % 100;
-            updateSpeed(s);
-        }, 100);
-
-        // Activating Alerts Demo
-        document.addEventListener("keydown", (event) => {
-            if (event.code === "Space") showPit("PIT SOON");
-            if (event.code == "Backspace") showExit("EXIT VEHICLE NOW")
-        });      
-
         // Alerts
         function showPit(message) {
             const pit = document.getElementById("pit");
-            pit.textContent = message;
+            pit.textContent = message;            
             pit.classList.add("show");
             setTimeout(() => {pit.classList.remove("show"); pit.classList.add("hide");}, 10000); 
+            pit.classList.remove("hide");
         }
 
         function showExit(message) {
