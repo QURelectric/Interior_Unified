@@ -96,8 +96,10 @@
             font-size: 8vw;
             text-align: center;
 
+            /* Hidden by default; JS drives opacity/transition directly */
             opacity: 0;
             pointer-events: none;
+            transition: opacity 0.4s ease;
         }
 
         .exit {
@@ -123,16 +125,8 @@
 
             opacity: 0;
             pointer-events: none;
+            transition: opacity 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-
-        /* Transitions */
-        .pit.show {animation: slideDown 0.4s ease forwards;}
-        .pit.hide {animation: slideUp 0.4s ease forwards;}
-        .exit.zoom {animation: zoomIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;}
-
-        @keyframes slideUp {0% { transform: translate(-50%, 0); opacity: 1; } 100% { transform: translate(-50%, -80%); opacity: 0; }}
-        @keyframes slideDown {0% { transform: translate(-50%, -80%); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; }}
-        @keyframes zoomIn {0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }}
 
     </style>
 </head>
@@ -165,8 +159,52 @@
     <div id="exit" class="exit"></div>
 
     <script> 
-        // Websocket Logic
-        var lastPit = 0;
+        // ── Pit banner state ──────────────────────────────────────────────
+        // Track the server-side Pit flag separately from whether the banner
+        // is currently visible so a page reload always reflects reality.
+        var pitActive = false;      // true while server says Pit == 1
+        var pitDismissTimer = null; // handle for the auto-hide timeout
+
+        function showPit(message) {
+            const el = document.getElementById("pit");
+            el.textContent = message;
+
+            // Cancel any in-flight dismiss timer so it can't hide a fresh banner
+            if (pitDismissTimer !== null) {
+                clearTimeout(pitDismissTimer);
+                pitDismissTimer = null;
+            }
+
+            el.style.opacity = "1";
+
+            // Auto-hide after 10 s, but only if the server flag has since cleared
+            pitDismissTimer = setTimeout(() => {
+                pitDismissTimer = null;
+                if (!pitActive) {
+                    el.style.opacity = "0";
+                }
+            }, 10000);
+        }
+
+        function hidePit() {
+            // Called as soon as the server clears Pit → 0.
+            // If a dismiss timer is already running let it finish naturally;
+            // if not, hide immediately.
+            if (pitDismissTimer === null) {
+                document.getElementById("pit").style.opacity = "0";
+            }
+            // Either way, once the timer fires it will now see pitActive===false
+            // and hide the banner.
+        }
+
+        // ── Exit overlay ──────────────────────────────────────────────────
+        function showExit(message) {
+            const el = document.getElementById("exit");
+            el.textContent = message;
+            el.style.opacity = "1";
+        }
+
+        // ── WebSocket ─────────────────────────────────────────────────────
         const ws = new WebSocket(`ws://${location.host}/ws`);
 
         ws.onmessage = (event) => {
@@ -178,19 +216,22 @@
             document.getElementById("soc").innerText = data.batterySOC + "%";
             updateSpeed(data.Speed);
 
-            // Activating Alerts
-            if (data.Pit == 1  && lastPit == 0){
-                lastPit = 1;
+            // Pit flag — edge-detect on the server value so the banner only
+            // appears once per activation, and reliably clears when it drops.
+            if (data.Pit == 1 && !pitActive) {
+                pitActive = true;
                 showPit("PIT SOON");
-            } else if(data.Pit == 0) {
-                lastPit = 0;
+            } else if (data.Pit == 0 && pitActive) {
+                pitActive = false;
+                hidePit();
             }
-            if (data.Exit == 1){
+
+            if (data.Exit == 1) {
                 showExit("EXIT VEHICLE NOW");
             }
-        };  
+        };
 
-        // Updating Speed
+        // ── Speedometer ───────────────────────────────────────────────────
         function updateSpeed(speed) {
             const maxSpeed = 100;
             const sweep = 270;  
@@ -211,22 +252,6 @@
 
             document.getElementById("speed-text").textContent = Math.round(speed);
         }
-
-        // Alerts
-        function showPit(message) {
-            const pit = document.getElementById("pit");
-            pit.textContent = message;            
-            pit.classList.add("show");
-            setTimeout(() => {pit.classList.remove("show"); pit.classList.add("hide");}, 10000); 
-            pit.classList.remove("hide");
-        }
-
-        function showExit(message) {
-            const exit = document.getElementById("exit");
-            exit.textContent = message;
-            exit.classList.add("zoom");
-        }
-
     </script>
 </body>
 </html>
