@@ -9,11 +9,9 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
             background: black;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             font-size: 4vw;
@@ -44,7 +42,6 @@
             border-radius: 50%;
             transform: rotate(-135deg);
             transition: background 0.08s linear;
-
             filter:
                 drop-shadow(0 0 0.2vw #ffffff)
                 drop-shadow(0 0 0.4vw #ffffff)
@@ -77,26 +74,22 @@
         } 
 
         /* Positioning */
-        .lap {position: absolute; top: 2%; left: 2%;}
-        .motor-temp {position: absolute; top: 2%; right: 2%;}
-        .lap-time {position: absolute; bottom: 2%; left: 2%;}
-        .battery {position: absolute; bottom: 2%; right: 2%;}
+        .current { position: absolute; top: 2%; left: 50%; transform: translateX(-50%); text-align: center; }
+        .motor-temp { position: absolute; top: 2%; right: 2%; text-align: right; }
+        .battery { position: absolute; bottom: 2%; right: 2%; text-align: right; }
 
         /* Overlay Alerts */
         .pit {
             position: fixed;
-            top: 5%;
+            top: 15%; /* Adjusted to not overlap current display */
             left: 50%;
             transform: translate(-50%, 0);
             width: 70%;
             padding: 1vw;
             border-radius: 1vw;
-            
             background: rgba(30, 30, 30, 0.85);
             font-size: 8vw;
             text-align: center;
-
-            /* Hidden by default; JS drives opacity/transition directly */
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
@@ -111,7 +104,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            
             background: #000;
             font-size: 10vw;
             text-align: center;
@@ -122,18 +114,16 @@
                 0 0 1.1vw #ff0a0a,
                 0 0 1.8vw #ff0a0a,
                 0 0 2.7vw #ff0a0a;
-
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-
     </style>
 </head>
 
 <body>
-    <div class="lap"> 
-        Lap: <br> <span id="lap">--</span>
+    <div class="current"> 
+        Current: <br> <span id="current">--</span> A
     </div>
 
     <div class="motor-temp"> 
@@ -147,10 +137,6 @@
         <div class="unit">km/h</div>
     </div> 
 
-    <div class="lap-time"> 
-        Time: <br> <span id="time">--</span> 
-    </div> 
-
     <div class="battery"> 
         Battery: <br> <span id="soc">--</span>
     </div> 
@@ -159,25 +145,17 @@
     <div id="exit" class="exit"></div>
 
     <script> 
-        // ── Pit banner state ──────────────────────────────────────────────
-        // Track the server-side Pit flag separately from whether the banner
-        // is currently visible so a page reload always reflects reality.
-        var pitActive = false;      // true while server says Pit == 1
-        var pitDismissTimer = null; // handle for the auto-hide timeout
+        var pitActive = false;
+        var pitDismissTimer = null;
 
         function showPit(message) {
             const el = document.getElementById("pit");
             el.textContent = message;
-
-            // Cancel any in-flight dismiss timer so it can't hide a fresh banner
             if (pitDismissTimer !== null) {
                 clearTimeout(pitDismissTimer);
                 pitDismissTimer = null;
             }
-
             el.style.opacity = "1";
-
-            // Auto-hide after 10 s, but only if the server flag has since cleared
             pitDismissTimer = setTimeout(() => {
                 pitDismissTimer = null;
                 if (!pitActive) {
@@ -187,37 +165,28 @@
         }
 
         function hidePit() {
-            // Called as soon as the server clears Pit → 0.
-            // If a dismiss timer is already running let it finish naturally;
-            // if not, hide immediately.
             if (pitDismissTimer === null) {
                 document.getElementById("pit").style.opacity = "0";
             }
-            // Either way, once the timer fires it will now see pitActive===false
-            // and hide the banner.
         }
 
-        // ── Exit overlay ──────────────────────────────────────────────────
         function showExit(message) {
             const el = document.getElementById("exit");
             el.textContent = message;
             el.style.opacity = "1";
         }
 
-        // ── WebSocket ─────────────────────────────────────────────────────
         const ws = new WebSocket(`ws://${location.host}/ws`);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
-            document.getElementById("lap").innerText = data.LapNumber;
+            // Update Displays
+            document.getElementById("current").innerText = data.Current.toFixed(1);
             document.getElementById("motor").innerText = data.MotorTemp.toFixed(1);
-            document.getElementById("time").innerText = data.LapTime;
             document.getElementById("soc").innerText = data.batterySOC + "%";
             updateSpeed(data.Speed);
 
-            // Pit flag — edge-detect on the server value so the banner only
-            // appears once per activation, and reliably clears when it drops.
             if (data.Pit == 1 && !pitActive) {
                 pitActive = true;
                 showPit("PIT SOON");
@@ -231,11 +200,9 @@
             }
         };
 
-        // ── Speedometer ───────────────────────────────────────────────────
         function updateSpeed(speed) {
             const maxSpeed = 100;
             const sweep = 270;  
-
             const angle = (speed / maxSpeed) * sweep;
 
             document.getElementById("speed-ring").style.background = `
@@ -245,11 +212,9 @@
                     #66aaff ${angle * 0.5}deg,
                     #3388ff ${angle * 0.75}deg,
                     #0072ff ${angle}deg,
-
                     transparent ${angle}deg
                 )
             `;
-
             document.getElementById("speed-text").textContent = Math.round(speed);
         }
     </script>
