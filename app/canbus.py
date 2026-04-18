@@ -12,6 +12,12 @@ def decode_temp(raw):
 def u16_le(lo, hi):
     return (hi << 8) | lo
 
+def i16_le(low, high):
+    val = (high << 8) | low
+    if val >= 0x8000:  # If the sign bit is set, it's negative
+        val -= 0x10000
+    return val
+
 def can_loop():
     bus = can.interface.Bus(channel="can0", interface="socketcan")
     while True:
@@ -53,7 +59,7 @@ def can_loop():
                     vehicle_state["FaultLevel"] = data[0]
                     vehicle_state["FaultCode"]  = data[1]
                     vehicle_state["Odometer"]   = u16_le(data[2], data[3]) / 10.0
-                    vehicle_state["Current"]    = u16_le(data[4], data[5]) / 10.0
+                    vehicle_state["Current"]    = i16_le(data[4], data[5]) / 10.0
                     vehicle_state["Speed"]      = u16_le(data[6], data[7]) / 10.0
                     vehicle_state["timestamp"]  = time.time()
 
