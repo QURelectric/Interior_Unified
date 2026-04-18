@@ -2,9 +2,9 @@ import can
 import time
 from app.state import vehicle_state, state_lock
 
-MSG1_ID = 0x301
+MSG1_ID = 0x201
 MSG2_ID = 0x202
-MSG3_ID = 0x303
+MSG3_ID = 0x203
 
 def decode_temp(raw):
     return raw - 40
