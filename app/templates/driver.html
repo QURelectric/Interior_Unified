@@ -25,56 +25,8 @@
                 0 0 2.7vw #0A4FFF;
         }
 
-        /* Speedometer */
-        .speedometer {
-            width: 35%;
-            aspect-ratio: 1/1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            filter: drop-shadow(0 0 0.4vw #0A4FFF)
-        }
-
-        .speed-ring {
-            width: 95%;
-            height: 95%;
-            border-radius: 50%;
-            transform: rotate(-135deg);
-            transition: background 0.08s linear;
-            filter:
-                drop-shadow(0 0 0.2vw #ffffff)
-                drop-shadow(0 0 0.4vw #ffffff)
-                drop-shadow(0 0 0.8vw #0A4FFF)
-                drop-shadow(0 0 1.1vw #0A4FFF);
-        }
-
-        .speed-hole {
-            position: absolute;
-            width: 75%;
-            height: 75%;
-            border-radius: 50%;
-            z-index: 1;
-            background: black;
-        }
-
-        .speed-text {
-            position: absolute;
-            transform: translate(0%, -12%);
-            z-index: 2;
-            font-weight: bold;
-            font-size: 9vw;
-        }
-
-        .unit {
-            position: absolute;
-            transform: translate(0%, 170%);
-            z-index: 2;
-            font-size: 3vw;
-        } 
-
         /* Positioning */
-        .current { position: absolute; top: 2%; left: 50%; transform: translateX(-50%); text-align: center; }
+        .current { position: absolute; top: 50%; left: 50%; transform: translateX(-50%); text-align: center; }
         .motor-temp { position: absolute; top: 2%; right: 2%; text-align: right; }
         .battery { position: absolute; bottom: 2%; right: 2%; text-align: right; }
 
@@ -128,13 +80,6 @@
 
     <div class="motor-temp"> 
         Temp:  <br> <span id="motor">--</span>  
-    </div> 
-
-    <div class="speedometer">
-        <div class="speed-ring" id="speed-ring"></div>
-        <div class="speed-hole"></div>
-        <div class="speed-text" id="speed-text"></div>
-        <div class="unit">km/h</div>
     </div> 
 
     <div class="battery"> 
@@ -200,23 +145,6 @@
             }
         };
 
-        function updateSpeed(speed) {
-            const maxSpeed = 100;
-            const sweep = 270;  
-            const angle = (speed / maxSpeed) * sweep;
-
-            document.getElementById("speed-ring").style.background = `
-                conic-gradient(
-                    #cfe4ff 0deg,
-                    #99c9ff ${angle * 0.25}deg,
-                    #66aaff ${angle * 0.5}deg,
-                    #3388ff ${angle * 0.75}deg,
-                    #0072ff ${angle}deg,
-                    transparent ${angle}deg
-                )
-            `;
-            document.getElementById("speed-text").textContent = Math.round(speed);
-        }
     </script>
 </body>
 </html>
